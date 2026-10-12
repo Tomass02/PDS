@@ -1,0 +1,171 @@
+@startuml veterinarna_ambulancia
+skinparam linetype ortho
+skinparam backgroundColor #FEFEFE
+skinparam classAttributeIconSize 0
+skinparam classAttributeFontName Monospaced
+hide circle
+
+class t_adresa {
+  ulica  : VARCHAR2(100)
+  mesto  : VARCHAR2(100)
+  psc    : VARCHAR2(20)
+  stat   : VARCHAR2(50)
+}
+
+class t_zdravotny_stav {
+  teplota_c   : NUMBER(4,1)
+  srdecn_tep  : NUMBER(3)
+  hmotnost_kg : NUMBER(5,2)
+  zavaznost   : VARCHAR2(50)
+  --
+  CONSTRUCTOR FUNCTION t_zdravotny_stav(...) RETURN SELF AS RESULT
+  MEMBER FUNCTION vypocitaj_rizikovy_index RETURN NUMBER
+  MEMBER FUNCTION to_json_string RETURN CLOB
+  MAP MEMBER FUNCTION sort_key RETURN NUMBER
+}
+
+entity OSOBA {
+  id_osoba    : NUMBER <<PK>> NN
+  --
+  meno        : VARCHAR2(50) NN
+  priezvisko  : VARCHAR2(50) NN
+  telefon     : VARCHAR2(25)
+  email       : VARCHAR2(100)
+}
+
+entity MAJITEL {
+  id_majitel  : NUMBER <<PK>>       NN
+  --
+  id_osoba    : NUMBER <<FK, UQ>> NN
+  adresa      : t_adresa <<OBJECT>> NN
+}
+
+entity ZVIERA {
+  id_zviera        : NUMBER <<PK>>    NN
+  --
+  id_majitel       : NUMBER <<FK>>    NN
+  meno             : VARCHAR2(50)   NN
+  druh             : VARCHAR2(50)   NN
+  datum_narodenia  : DATE           NN
+  plemeno          : VARCHAR2(50)
+  fotografia       : BLOB <<fotografia / RTG>>
+}
+
+entity VETERINAR {
+  id_veterinar  : NUMBER <<PK>>   NN
+  --
+  id_osoba      : NUMBER <<FK, UQ>> NN
+  specializacia : VARCHAR2(100) NN
+}
+
+entity ZDRAVOTNA_KARTA {
+  id_zdravotna_karta : NUMBER <<PK>>    NN
+  --
+  id_zviera          : NUMBER <<FK>>    NN
+  datum_zalozenia    : DATE           NN
+  poznamka           : VARCHAR2(200)
+}
+
+entity VYSETRENIE {
+  id_vysetrenie          : NUMBER <<PK>>                NN
+  --
+  id_zdravotna_karta     : NUMBER <<FK>>                NN
+  id_veterinar           : NUMBER <<FK>>                NN
+  datum_cas_vysetrenia   : TIMESTAMP                  NN
+  diagnoza               : VARCHAR2(500)
+  popis_liecby           : varchar2(500)
+  detaily_stavu          : t_zdravotny_stav <<OBJECT>>  NN
+}
+
+entity FAKTURA {
+  id_faktura        : NUMBER <<PK>> NN
+  --
+  id_vysetrenie     : NUMBER <<FK>> NN
+  suma_celkom       : NUMBER(10,2) NN
+  datum_vystavenia  : DATE NN
+  datum_splatnosti  : DATE NN
+  stav_uhrady       : VARCHAR2(20)
+  scan_faktury      : BLOB <<PDF scan>>
+}
+
+entity POLOZKA_FAKTURY {
+  id_polozka_faktury : NUMBER <<PK>> NN
+  --
+  id_faktura         : NUMBER <<FK>> NN
+  nazov              : VARCHAR2(100) NN
+  mnozstvo           : NUMBER(8,2)
+  jednotkova_cena    : NUMBER(10,2)
+  sadzba_dph         : NUMBER(5,2)
+}
+
+entity PLATBA {
+  id_platba          : NUMBER <<PK>> NN
+  --
+  id_faktura         : NUMBER <<FK>> NN
+  datum_cas_platby   : TIMESTAMP NN
+  suma               : NUMBER(10,2) NN
+  sposob_platby      : VARCHAR2(30)
+  variabilny_symbol  : VARCHAR2(30)
+}
+
+entity PREDPIS {
+  id_predpis        : NUMBER <<PK>> NN
+  --
+  id_vysetrenie     : NUMBER <<FK>> NN
+  nazov_lieku       : VARCHAR2(100) NN
+  datum_od          : DATE
+  datum_do          : DATE
+  poznamka          : VARCHAR(200)
+}
+
+OSOBA ||--o| MAJITEL : "údaje majiteľa"
+OSOBA ||--o| VETERINAR : "údaje veterinára"
+MAJITEL ||--o{ ZVIERA : "vlastní"
+ZVIERA ||--|| ZDRAVOTNA_KARTA : "má"
+ZDRAVOTNA_KARTA ||--o{ VYSETRENIE : "obsahuje"
+VETERINAR ||--o{ VYSETRENIE : "vykonáva"
+VYSETRENIE ||--o| FAKTURA : "generuje"
+FAKTURA ||--|{ POLOZKA_FAKTURY : "obsahuje"
+FAKTURA ||--o{ PLATBA : "uhrádza sa platbami"
+VYSETRENIE ||--o{ PREDPIS : "obsahuje predpisy"
+
+note bottom of ZDRAVOTNA_KARTA
+  Každé zviera musí mať práve jednu zdravotnú kartu.
+  id_zviera je NOT NULL a UNIQUE, čím karta patrí
+  najviac jednému zvieraťu. Kartu vytvoriť spolu so zvieraťom
+  cez PL/SQL procedúru v jednej transakcii; zakázať priame INSERTy.
+  Samotný FK nevynúti kartu pre každé zviera.
+end note
+
+note bottom of FAKTURA
+  Súbory priamo v DB: fotografia/RTG a scan faktúry (BLOB).
+  Reporty spracujú metadáta a zobrazia náhľad/odkaz na uložený BLOB.
+  JSON/XML report: výstupný endpoint alebo CLOB.
+end note
+
+note bottom of VYSETRENIE
+  Navrhované indexy: (id_zdravotna_karta, datum_cas_vysetrenia),
+  (id_veterinar, datum_cas_vysetrenia),
+  FAKTURA(stav_uhrady, datum_splatnosti),
+  PLATBA(datum_cas_platby).
+end note
+
+note bottom of VYSETRENIE
+  MINIMÁLNE VÝSTUPY (agregácie, dátumy, analytické/window funkcie)
+  1. Počty vyšetrení a tržby podľa mesiaca.
+  2. Počty vyšetrení podľa druhu zvieraťa a mesiaca.
+  3. Najčastejšie diagnózy podľa obdobia.
+  4. Vyťaženosť veterinárov; RANK podľa mesiaca.
+  5. Priemerný/maximálny rizikový index podľa druhu.
+  6. Kĺzavý priemer počtu vyšetrení za 30 dní.
+  7. Kumulatívne tržby v čase (SUM OVER).
+  8. Neuhradené faktúry a dni po splatnosti.
+  9. Tržby podľa kategórie služby a obdobia.
+  10. Zmena hmotnosti zvieraťa v čase (LAG).
+  11. Opakované návštevy do 30 dní (časové okno).
+  12. Ročné výdavky majiteľov; ROW_NUMBER/RANK.
+  Vybrané reporty majú spracovať objekt t_zdravotny_stav,
+  PL/SQL RECORD a kolekciu; jeden výstup poskytovať ako JSON/XML.
+end note
+
+@enduml
