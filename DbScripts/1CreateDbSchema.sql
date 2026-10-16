@@ -228,3 +228,32 @@ CREATE INDEX predpis_vysetrenie_ix
 -- UNIQUE(id_zviera) zabrani viacerym kartam pre zviera.
 -- Povinnost mat kartu pre kazde zviera vyzaduje transakcny postup/proceduru.
 -- FK na polozka_faktury nezaruci, ze kazda faktura ma aspon jednu polozku.
+
+
+-- Prava insert, update, delete, select 
+GRANT SELECT, INSERT, UPDATE, DELETE ON osoba TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON majitel TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON veterinar TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON druh TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON plemeno TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON zviera TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON zdravotna_karta TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON vysetrenie TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON faktura TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON cennik TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON polozka_faktury TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON platba TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON liek TO BIELIKOVA3, HODAS28;
+GRANT SELECT, INSERT, UPDATE, DELETE ON predpis TO BIELIKOVA3, HODAS28;
+
+-- prava objekty
+GRANT EXECUTE ON t_adresa TO BIELIKOVA3, HODAS28;
+GRANT EXECUTE ON t_zdravotny_stav TO BIELIKOVA3, HODAS28;
+
+
+--INSERT INTO SEBENOVA3.osoba (meno, priezvisko, telefon, email) 
+--VALUES ('jan', 'haha', '0900123456', 'jan@gmail.com');
+
+select * from osoba;
+commit;
+--delete from osoba where meno = 'Jan';
