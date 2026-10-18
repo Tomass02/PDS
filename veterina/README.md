@@ -62,7 +62,7 @@ Copy-Item .env.example .env
 A uprav `.env`:
 
 ```env
-DB_USER=bielikova3
+DB_USER=username
 DB_PASSWORD=TVOJE_HESLO
 DB_HOST=oradb.fri.uniza.sk
 DB_PORT=1521
@@ -86,7 +86,3 @@ Potom otvor:
 ```text
 http://localhost:8080
 ```
-
-## Poznamka k Oracle uctu
-
-Ak Oracle vrati `ORA-28000: The account is locked`, aplikacia sa nemoze prihlasit, kym ucet neodomkne spravca databazy.
