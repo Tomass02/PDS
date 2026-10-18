@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header(title)">
+    <div class="topbar">
+        <a class="brand" href="/">Veterinarna ambulancia</a>
+        <nav>
+            <a href="/osoby">Osoby</a>
+            <a href="/majitelia">Majitelia</a>
+            <a href="/veterinari">Veterinari</a>
+            <a href="/zvierata">Zvierata</a>
+            <a href="/karty">Zdravotne karty</a>
+            <a href="/vysetrenia">Vysetrenia</a>
+            <a href="/faktury">Faktury</a>
+            <a href="/polozky">Polozky</a>
+            <a href="/platby">Platby</a>
+            <a href="/predpisy">Predpisy</a>
+            <a href="/report/object">Objektovy vystup</a>
+            <a href="/report/json" target="_blank">JSON</a>
+        </nav>
+    </div>
+    <div class="page-head"><h1 th:text="${title}">Nadpis</h1></div>
+</header>
+<div th:fragment="messages">
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Veterinar</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<div th:replace="~{fragments :: header(${item == null ? 'Novy veterinar' : 'Upravit veterinara'})}"></div><main><div class="card"><form class="grid" method="post" th:action="${item == null} ? @{/veterinari} : @{/veterinari/{id}(id=${item.idVeterinar})}">
+<div class="field"><label>Osoba</label><select name="idOsoba" required><option th:each="o:${osoby}" th:value="${o.id}" th:text="${o.label}" th:selected="${item != null and item.idOsoba == o.id}"></option></select></div>
+<div class="field"><label>Specializacia</label><input name="specializacia" required th:value="${item?.specializacia}"></div><div class="form-actions"><button class="btn">Ulozit</button><a class="btn secondary" href="/veterinari">Spat</a></div></form></div></main></body></html>

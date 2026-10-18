@@ -1,0 +1,5 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Osoby</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<div th:replace="~{fragments :: header('Osoby')}"></div><div th:replace="~{fragments :: messages}"></div>
+<main><p><a class="btn" href="/osoby/new">Pridat osobu</a></p><div class="table-wrap"><table><thead><tr><th>ID</th><th>Meno</th><th>Priezvisko</th><th>Telefon</th><th>Email</th><th>Akcie</th></tr></thead><tbody>
+<tr th:each="x:${items}"><td th:text="${x.idOsoba}"></td><td th:text="${x.meno}"></td><td th:text="${x.priezvisko}"></td><td th:text="${x.telefon}"></td><td th:text="${x.email}"></td><td><div class="actions"><a class="btn secondary" th:href="@{/osoby/{id}/edit(id=${x.idOsoba})}">Upravit</a><form th:action="@{/osoby/{id}/delete(id=${x.idOsoba})}" method="post"><button class="btn danger">Zmazat</button></form></div></td></tr>
+</tbody></table></div></main></body></html>

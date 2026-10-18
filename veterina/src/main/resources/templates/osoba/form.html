@@ -1,0 +1,5 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Osoba</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<div th:replace="~{fragments :: header(${item == null ? 'Nova osoba' : 'Upravit osobu'})}"></div><main><div class="card"><form class="grid" method="post" th:action="${item == null} ? @{/osoby} : @{/osoby/{id}(id=${item.idOsoba})}">
+<div class="field"><label>Meno</label><input name="meno" required th:value="${item?.meno}"></div><div class="field"><label>Priezvisko</label><input name="priezvisko" required th:value="${item?.priezvisko}"></div>
+<div class="field"><label>Telefon</label><input name="telefon" th:value="${item?.telefon}"></div><div class="field"><label>Email</label><input type="email" name="email" th:value="${item?.email}"></div>
+<div class="form-actions"><button class="btn">Ulozit</button><a class="btn secondary" href="/osoby">Spat</a></div></form></div></main></body></html>

@@ -1,0 +1,19 @@
+# Maven build output
+**/target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Java and Spring Boot local files
+*.class
+*.log
+.env
+
+# Local Python virtual environment
+venv/
+
+# Operating system files
+.DS_Store
+Thumbs.db

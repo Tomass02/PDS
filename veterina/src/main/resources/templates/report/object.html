@@ -1,0 +1,4 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Objektovy vystup</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<div th:replace="~{fragments :: header('Objektovy vystup T_ZDRAVOTNY_STAV')}"></div><main><p>Vystup cita atributy objektu, vola <code>vypocitaj_rizikovy_index()</code> a triedi cez MAP metodu objektu.</p><div class="table-wrap"><table><thead><tr><th>Vysetrenie</th><th>Zviera</th><th>Teplota</th><th>Tep</th><th>Hmotnost</th><th>Zavaznost</th><th>Rizikovy index</th></tr></thead><tbody>
+<tr th:each="x:${items}"><td th:text="${x['ID_VYSETRENIE']}"></td><td th:text="${x['ZVIERA']}"></td><td th:text="${x['TEPLOTA_C']}"></td><td th:text="${x['SRDECNY_TEP']}"></td><td th:text="${x['HMOTNOST_KG']}"></td><td th:text="${x['ZAVAZNOST']}"></td><td th:text="${x['RIZIKOVY_INDEX']}"></td></tr>
+</tbody></table></div></main></body></html>

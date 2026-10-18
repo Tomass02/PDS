@@ -1,0 +1,4 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Veterinari</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<div th:replace="~{fragments :: header('Veterinari')}"></div><div th:replace="~{fragments :: messages}"></div><main><p><a class="btn" href="/veterinari/new">Pridat veterinara</a></p><div class="table-wrap"><table><thead><tr><th>ID</th><th>Osoba</th><th>Specializacia</th><th>Akcie</th></tr></thead><tbody>
+<tr th:each="x:${items}"><td th:text="${x.idVeterinar}"></td><td th:text="${x.osoba}"></td><td th:text="${x.specializacia}"></td><td><div class="actions"><a class="btn secondary" th:href="@{/veterinari/{id}/edit(id=${x.idVeterinar})}">Upravit</a><form th:action="@{/veterinari/{id}/delete(id=${x.idVeterinar})}" method="post"><button class="btn danger">Zmazat</button></form></div></td></tr>
+</tbody></table></div></main></body></html>

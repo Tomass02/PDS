@@ -1,0 +1,6 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Majitel</title><link rel="stylesheet" href="/css/style.css"></head><body>
+<div th:replace="~{fragments :: header(${item == null ? 'Novy majitel' : 'Upravit majitela'})}"></div><main><div class="card"><form class="grid" method="post" th:action="${item == null} ? @{/majitelia} : @{/majitelia/{id}(id=${item.idMajitel})}">
+<div class="field full"><label>Osoba</label><select name="idOsoba" required><option th:each="o:${osoby}" th:value="${o.id}" th:text="${o.label}" th:selected="${item != null and item.idOsoba == o.id}"></option></select></div>
+<div class="field"><label>Ulica</label><input name="ulica" required th:value="${item?.ulica}"></div><div class="field"><label>Mesto</label><input name="mesto" required th:value="${item?.mesto}"></div>
+<div class="field"><label>PSC</label><input name="psc" required th:value="${item?.psc}"></div><div class="field"><label>Stat</label><input name="stat" required th:value="${item?.stat}"></div>
+<div class="form-actions"><button class="btn">Ulozit</button><a class="btn secondary" href="/majitelia">Spat</a></div></form></div></main></body></html>
