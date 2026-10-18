@@ -86,3 +86,16 @@ Potom otvor:
 ```text
 http://localhost:8080
 ```
+
+## Spustenie cez Docker
+
+Potrebujes Docker s podporou Docker Compose. Najprv vytvor `.env` podla postupu
+vyssie a nakonfiguruj pristup k Oracle databaze, ktora musi byt dostupna zo siete
+Docker kontajnera. Databazu ani jej inicializacne skripty kontajner nespusta.
+
+V adresari `veterina` spusti:
+
+docker compose up --build
+
+Aplikacia bude dostupna na `http://localhost:8080`. Na zastavenie pouzi
+`Ctrl+C`; na odstranenie kontajnera spusti `docker compose down`.
