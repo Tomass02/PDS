@@ -1,5 +1,47 @@
 <!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Predpis</title><link rel="stylesheet" href="/css/style.css"></head><body>
 <div th:replace="~{fragments :: header(${item == null ? 'Novy predpis' : 'Upravit predpis'})}"></div><main><div class="card"><form class="grid" method="post" th:action="${item == null} ? @{/predpisy} : @{/predpisy/{id}(id=${item.idPredpis})}">
-<div class="field"><label>Vysetrenie</label><select name="idVysetrenie" required><option th:each="o:${vysetrenia}" th:value="${o.id}" th:text="${o.label}" th:selected="${item != null and item.idVysetrenie == o.id}"></option></select></div><div class="field"><label>Nazov lieku</label><input name="nazovLieku" required th:value="${item?.nazovLieku}"></div>
+<div class="field"><label>Vysetrenie</label><select name="idVysetrenie" required><option th:each="o:${vysetrenia}" th:value="${o.id}" th:text="${o.label}" th:selected="${item != null and item.idVysetrenie == o.id}"></option></select></div><div class="field"><label>Nazov lieku</label><input id="nazovLieku" name="nazovLieku" required autocomplete="off" th:value="${item?.nazovLieku}"><div id="veterinarne-lieky-navrhy" class="autocomplete-results"></div></div>
 <div class="field"><label>Datum od</label><input type="date" name="datumOd" th:value="${item?.datumOd}"></div><div class="field"><label>Datum do</label><input type="date" name="datumDo" th:value="${item?.datumDo}"></div><div class="field full"><label>Poznamka</label><textarea name="poznamka" th:text="${item?.poznamka}"></textarea></div>
-<div class="form-actions"><button class="btn">Ulozit</button><a class="btn secondary" href="/predpisy">Spat</a></div></form></div></main></body></html>
+<div class="form-actions"><button class="btn">Ulozit</button><a class="btn secondary" href="/predpisy">Spat</a></div></form></div></main>
+<script>
+const input = document.getElementById('nazovLieku');
+const results = document.getElementById('veterinarne-lieky-navrhy');
+let timer;
+let requestNumber = 0;
+input.addEventListener('input', () => {
+    clearTimeout(timer);
+    const currentRequest = ++requestNumber;
+    const query = input.value.trim();
+    if (query.length < 2) {
+        results.replaceChildren();
+        return;
+    }
+    timer = setTimeout(async () => {
+        try {
+            const response = await fetch('/api/veterinarne-lieky?query=' + encodeURIComponent(query));
+            if (currentRequest !== requestNumber) return;
+            if (!response.ok) {
+                throw new Error('API error');
+            }
+            const medicines = await response.json();
+            results.replaceChildren(...medicines.map(medicine => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'autocomplete-result';
+                button.textContent = [medicine.name, medicine.strength, medicine.pharmaceuticalForm]
+                    .filter(Boolean).join(' - ');
+                button.addEventListener('click', () => {
+                    input.value = medicine.name;
+                    results.replaceChildren();
+                });
+                return button;
+            }));
+            if (!medicines.length) {
+                results.textContent = 'Liek sa nenašiel.';
+            }
+        } catch (error) {
+            results.textContent = 'Databáza veterinárnych liekov momentálne nie je dostupná.';
+        }
+    }, 250);
+});
+</script></body></html>
