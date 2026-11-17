@@ -23,8 +23,6 @@ CREATE OR REPLACE TYPE BODY t_zdravotny_stav AS
         RETURN;
     END;
 
-    -- Demonstračný index pre potreby semestrálnej práce.
-    -- Nie je určený na reálne veterinárne rozhodovanie.
     MEMBER FUNCTION vypocitaj_rizikovy_index RETURN NUMBER IS
         v_index NUMBER := 0;
     BEGIN
@@ -242,17 +240,46 @@ INSERT INTO platba (id_faktura, datum_cas_platby, suma, sposob_platby, variabiln
 INSERT INTO platba (id_faktura, datum_cas_platby, suma, sposob_platby, variabilny_symbol) VALUES (9, TIMESTAMP '2024-03-10 10:15:00', 20.00, 'HOTOVOSŤ', '2024031009');
 INSERT INTO platba (id_faktura, datum_cas_platby, suma, sposob_platby, variabilny_symbol) VALUES (10, TIMESTAMP '2024-03-15 09:30:00', 25.00, 'KARTA', '2024031510');
 
--- PREDPIS 
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (1, 'Otibiovin kvapky', DATE '2024-01-10', DATE '2024-01-17', 'Podávať 3x denne po 2 kvapky do ucha');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (2, 'NEXGARD žuvacia tableta', DATE '2024-01-12', DATE '2024-01-12', 'Jednorazovo na parazity');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (3, 'Meloxidyl sirup', DATE '2024-01-15', DATE '2024-01-25', 'Proti bolesti, podávať raz denne');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (3, 'Amoksiklav 250mg', DATE '2024-01-15', DATE '2024-01-22', 'Antibiotiká, 1 tableta po 12 hodín');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (5, 'Zyrtec kvapky', DATE '2024-02-05', DATE '2024-02-12', '5 kvapiek ráno');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (6, 'Canikur forte pasta', DATE '2024-02-10', DATE '2024-02-15', 'Podávať priamo do tlamy');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (7, 'Fortekor 5mg', DATE '2024-02-18', DATE '2024-05-18', 'Užívanie na srdce, 1/2 tablety denne');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (8, 'Betadine masť', DATE '2024-03-02', DATE '2024-03-09', 'Potierať ranu 2x denne');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (9, 'Caniverm pasta', DATE '2024-03-10', DATE '2024-03-10', 'Jednorazová dávka');
-INSERT INTO predpis (id_vysetrenie, nazov_lieku, datum_od, datum_do, poznamka) VALUES (10, 'Bravecto tableta', DATE '2024-03-15', DATE '2024-06-15', 'Ochrana proti kliešťom na 3 mesiace');
+-- PREDPISY ODKAZUJU NA KATALOG LIEKOV V DATABAZE OBELIX.
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 1, id_liek, DATE '2024-01-10', DATE '2024-01-17', 'Podávať 3x denne po 2 kvapky do ucha'
+FROM liek WHERE nazov_lieku = 'Otibiovin kvapky';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 2, id_liek, DATE '2024-01-12', DATE '2024-01-12', 'Jednorazovo na parazity'
+FROM liek WHERE nazov_lieku = 'NEXGARD žuvacia tableta';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 3, id_liek, DATE '2024-01-15', DATE '2024-01-25', 'Proti bolesti, podávať raz denne'
+FROM liek WHERE nazov_lieku = 'Meloxidyl sirup';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 3, id_liek, DATE '2024-01-15', DATE '2024-01-22', 'Antibiotiká, 1 tableta po 12 hodín'
+FROM liek WHERE nazov_lieku = 'Amoksiklav 250mg';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 5, id_liek, DATE '2024-02-05', DATE '2024-02-12', '5 kvapiek ráno'
+FROM liek WHERE nazov_lieku = 'Zyrtec kvapky';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 6, id_liek, DATE '2024-02-10', DATE '2024-02-15', 'Podávať priamo do tlamy'
+FROM liek WHERE nazov_lieku = 'Canikur forte pasta';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 7, id_liek, DATE '2024-02-18', DATE '2024-05-18', 'Užívanie na srdce, 1/2 tablety denne'
+FROM liek WHERE nazov_lieku = 'Fortekor 5mg';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 8, id_liek, DATE '2024-03-02', DATE '2024-03-09', 'Potierať ranu 2x denne'
+FROM liek WHERE nazov_lieku = 'Betadine masť';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 9, id_liek, DATE '2024-03-10', DATE '2024-03-10', 'Jednorazová dávka'
+FROM liek WHERE nazov_lieku = 'Caniverm pasta';
+
+INSERT INTO predpis (id_vysetrenie, id_liek, datum_od, datum_do, poznamka)
+SELECT 10, id_liek, DATE '2024-03-15', DATE '2024-06-15', 'Ochrana proti kliešťom na 3 mesiace'
+FROM liek WHERE nazov_lieku = 'Bravecto tableta';
 COMMIT;
 
 ------------------------

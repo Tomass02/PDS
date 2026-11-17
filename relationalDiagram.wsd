@@ -112,10 +112,16 @@ entity PREDPIS {
   id_predpis        : NUMBER <<PK>> NN
   --
   id_vysetrenie     : NUMBER <<FK>> NN
-  nazov_lieku       : VARCHAR2(100) NN
+  id_liek           : NUMBER <<DB LINK>> NN
   datum_od          : DATE
   datum_do          : DATE
   poznamka          : VARCHAR(200)
+}
+
+entity LIEK <<Obelix>> {
+  id_liek           : NUMBER <<PK>> NN
+  --
+  nazov_lieku       : VARCHAR2(100) <<UQ>> NN
 }
 
 OSOBA ||--o| MAJITEL : "údaje majiteľa"
@@ -128,6 +134,13 @@ VYSETRENIE ||--o| FAKTURA : "generuje"
 FAKTURA ||--|{ POLOZKA_FAKTURY : "obsahuje"
 FAKTURA ||--o{ PLATBA : "uhrádza sa platbami"
 VYSETRENIE ||--o{ PREDPIS : "obsahuje predpisy"
+LIEK ||--o{ PREDPIS : "katalóg liekov cez DB link"
+
+note bottom of LIEK
+  Tabuľka je uložená na databázovom serveri Obelix.
+  Oracle nepodporuje deklaratívny FK cez DB link;
+  existencia lieku sa overuje triggerom v Oradb.
+end note
 
 note bottom of ZDRAVOTNA_KARTA
   Každé zviera musí mať práve jednu zdravotnú kartu.

@@ -17,6 +17,9 @@ CRUD je implementovany nad vsetkymi tabulkami:
 - PLATBA
 - PREDPIS
 
+Katalog `LIEK` je samostatna, iba na citanie pouzivana tabulka v databaze
+Obelix; formular predpisu nacitava lieky cez database link.
+
 Dalej zostava:
 
 - objektovy vystup nad `T_ZDRAVOTNY_STAV`,
@@ -44,12 +47,33 @@ src/main/resources/
 
 ## 1. Databaza
 
-V Oracle najprv spusti:
+Katalog liekov je ulozeny na vzdialenom serveri Obelix. Pouzite Oracle konto musi
+existovat na oboch serveroch s rovnakym heslom; database link pouziva prihlasenie
+aktualneho pouzivatela a neuklada heslo do skriptu.
+
+1. Na Obelixe, po pripojeni ako `HODAS28`, spusti raz
+   `DbScripts/0CreateLiekOnObelix.sql`. Skript vytvori tabulku `LIEK` a vlozi
+   vzorovy katalog.
+2. Pre novu, prazdnu schemu Oradb spusti:
 
 ```sql
 @1CreateDbSchema.sql
 @2Checkpoint.sql
 ```
+
+`1CreateDbSchema.sql` vytvori database link `LIEK_OBELIX_LINK` a synonymum
+`LIEK`; predpisy ukladaju `ID_LIEK` a nacitavaju nazov lieku cez link.
+Oracle nevie vynutit cudzi kluc napriec databazami, preto trigger overuje
+existenciu lieku pri zapise a pouzite lieky nevymazavaj z katalogu.
+Ak na Obelixe pri vytvarani tabulky dostanes `ORA-01950`, poziadaj spravcu
+databazy o kvotu v predvolenom tablespace pouzivatela `HODAS28`.
+
+Pre uz vytvorenu Oradb schemu tieto inicializacne skripty znovu nespustaj:
+po vytvoreni `LIEK` na Obelixe spusti na Oradb iba
+`DbScripts/3MigrateExistingPredpis.sql`. Migracia zachova existujuce predpisy;
+ak sa niektory stary nazov lieku v Obelixe nenajde, dopln ho tam a migraciu
+zopakuj. Aplikacia sa pripaja na Oradb pod schemou vlastniacou predpisy a
+database link.
 
 ## 2. Nastavenie pripojenia
 
