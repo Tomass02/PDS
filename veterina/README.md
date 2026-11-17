@@ -99,3 +99,18 @@ docker compose up --build
 
 Aplikacia bude dostupna na `http://localhost:8080`. Na zastavenie pouzi
 `Ctrl+C`; na odstranenie kontajnera spusti `docker compose down`.
+
+## EU Veterinary Product Database
+
+Formular predpisu vyhladava iba veterinárne lieky cez oficialnu EU Veterinary
+Product Database:
+
+```env
+VETERINARY_API_URL=https://medicines.health.europa.eu/veterinary/en/search-medicines/{query}
+```
+
+V URL sa `{query}` nahradi hladanym vyrazom. Backend k URL doplni parametre
+`keys`, `conjunction` a `_format=xlsx`, stiahne filtrovany XLSX export z EU
+Veterinary Product Database a vrati najviac 20 navrhov cez lokalny endpoint
+`/api/veterinarne-lieky`. Pri kratkom dotaze, pre ktory databaza nema
+priame vysledky, pouzije aj autocomplete databazy.
