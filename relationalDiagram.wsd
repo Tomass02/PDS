@@ -24,6 +24,10 @@ class t_zdravotny_stav {
   MAP MEMBER FUNCTION sort_key RETURN NUMBER
 }
 
+class t_zdravotny_stav_nt <<nested table>> {
+  TYPE t_zdravotny_stav_nt AS TABLE OF t_zdravotny_stav
+}
+
 entity OSOBA {
   id_osoba    : NUMBER <<PK>> NN
   --
@@ -120,6 +124,7 @@ entity PREDPIS {
 
 OSOBA ||--o| MAJITEL : "údaje majiteľa"
 OSOBA ||--o| VETERINAR : "údaje veterinára"
+t_zdravotny_stav_nt ..> t_zdravotny_stav : "kolekcia prvkov typu"
 MAJITEL ||--o{ ZVIERA : "vlastní"
 ZVIERA ||--|| ZDRAVOTNA_KARTA : "má"
 ZDRAVOTNA_KARTA ||--o{ VYSETRENIE : "obsahuje"
