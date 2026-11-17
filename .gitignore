@@ -11,8 +11,10 @@
 *.log
 .env
 
-# Local Python virtual environment
+# Local Python virtual environments and caches
 venv/
+.venv/
+__pycache__/
 
 # Operating system files
 .DS_Store
